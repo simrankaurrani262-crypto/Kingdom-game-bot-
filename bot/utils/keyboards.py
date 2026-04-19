@@ -389,3 +389,30 @@ def tutorial_step_keyboard(step: int) -> InlineKeyboardMarkup:
     else:
         keyboard = [[InlineKeyboardButton("🎮 Continue", callback_data="tutorial_done")]]
     return InlineKeyboardMarkup(keyboard)
+
+# Add to existing keyboards.py
+
+def stats_menu_keyboard():
+    """Main stats menu keyboard."""
+    keyboard = [
+        [InlineKeyboardButton("Army Composition", callback_data='stats_army'),
+         InlineKeyboardButton("Resource Trends", callback_data='stats_resources')],
+        [InlineKeyboardButton("Battle Analytics", callback_data='stats_battle'),
+         InlineKeyboardButton("Power Profile", callback_data='stats_power')],
+        [InlineKeyboardButton("Activity Heatmap", callback_data='stats_activity'),
+         InlineKeyboardButton("Economy", callback_data='stats_economy')],
+        [InlineKeyboardButton("Back to Dashboard", callback_data='stats_dashboard')],
+    ]
+    return InlineKeyboardMarkup(keyboard)
+
+def visual_menu_keyboard():
+    """Visual commands menu."""
+    keyboard = [
+        [InlineKeyboardButton("Charts", callback_data='visual_charts'),
+         InlineKeyboardButton("Animations", callback_data='visual_animations')],
+        [InlineKeyboardButton("Cards", callback_data='visual_cards'),
+         InlineKeyboardButton("Leaderboard", callback_data='visual_leaderboard')],
+        [InlineKeyboardButton("Help", callback_data='visual_help')],
+    ]
+    return InlineKeyboardMarkup(keyboard)
+        
