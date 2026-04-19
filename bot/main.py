@@ -23,6 +23,26 @@ from models.database import Database
 from services.notification import NotificationService
 from tasks.scheduler import GameScheduler
 
+# ===== NEW: VISUAL HANDLERS IMPORT =====
+try:
+    from handlers.stats import (
+        handler_stats, handler_stats_callback,
+        handler_army_chart, handler_resource_chart,
+        handler_battle_stats, handler_power_profile
+    )
+    from handlers.visual_commands import (
+        handler_animate_battle, handler_levelup_animation, handler_reward_animation,
+        handler_training_animation, handler_achievement_animation,
+        handler_hero_card, handler_kingdom_banner, handler_battle_report_card,
+        handler_spy_report_card, handler_compare, handler_achievements_chart,
+        handler_leaderboard_chart, handler_leaderboard_podium,
+        handler_spin_wheel, handler_notification_card, handler_visual_help
+    )
+    VISUAL_HANDLERS_ENABLED = True
+except ImportError as e:
+    print(f"[ERROR] Visual handlers load nahi hue: {e}")
+    VISUAL_HANDLERS_ENABLED = False
+
 # Handler imports
 from handlers.start import (
     handler_start, handle_start_callback,
@@ -80,7 +100,6 @@ async def post_init(application: Application):
     game_scheduler.set_bot(application.bot)
     await game_scheduler.start()
     
-    # Set bot commands menu
     await application.bot.set_my_commands([
         ("start", "Start the game / Dashboard"),
         ("dashboard", "Open main dashboard"),
@@ -149,8 +168,37 @@ def main():
     application.add_handler(CommandHandler("bounty", handle_bounty_command))
     application.add_handler(CommandHandler("bounties", handle_bounties_command))
     application.add_handler(CommandHandler("admin", handle_admin_command))
-    
+
+    # ===== NEW: VISUAL COMMAND HANDLERS =====
+    if VISUAL_HANDLERS_ENABLED:
+        application.add_handler(CommandHandler("stats", handler_stats))
+        application.add_handler(CommandHandler("army_chart", handler_army_chart))
+        application.add_handler(CommandHandler("resource_chart", handler_resource_chart))
+        application.add_handler(CommandHandler("battle_stats", handler_battle_stats))
+        application.add_handler(CommandHandler("power_profile", handler_power_profile))
+
+        application.add_handler(CommandHandler("animate_battle", handler_animate_battle))
+        application.add_handler(CommandHandler("levelup_anim", handler_levelup_animation))
+        application.add_handler(CommandHandler("reward_anim", handler_reward_animation))
+        application.add_handler(CommandHandler("train_anim", handler_training_animation))
+        application.add_handler(CommandHandler("achievement_anim", handler_achievement_animation))
+        application.add_handler(CommandHandler("spin", handler_spin_wheel))
+
+        application.add_handler(CommandHandler("hero_card", handler_hero_card))
+        application.add_handler(CommandHandler("kingdom_banner", handler_kingdom_banner))
+        application.add_handler(CommandHandler("battle_report", handler_battle_report_card))
+        application.add_handler(CommandHandler("spy_report_card", handler_spy_report_card))
+        application.add_handler(CommandHandler("compare", handler_compare))
+        application.add_handler(CommandHandler("achievements_chart", handler_achievements_chart))
+        application.add_handler(CommandHandler("leaderboard_chart", handler_leaderboard_chart))
+        application.add_handler(CommandHandler("podium", handler_leaderboard_podium))
+        application.add_handler(CommandHandler("notify_test", handler_notification_card))
+        application.add_handler(CommandHandler("visual_help", handler_visual_help))
+
     # ===== CALLBACK HANDLERS =====
+    if VISUAL_HANDLERS_ENABLED:
+        application.add_handler(CallbackQueryHandler(handler_stats_callback, pattern='^stats_'))
+
     application.add_handler(CallbackQueryHandler(handle_start_callback, pattern="^(start_game|how_to_play|help_page:|back_welcome)$"))
     application.add_handler(CallbackQueryHandler(process_flag_selection, pattern="^flag:"))
     application.add_handler(CallbackQueryHandler(process_trait_selection, pattern="^trait:"))
@@ -186,7 +234,6 @@ def main():
     # ===== TEXT MESSAGES =====
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text_input))
     
-    # Error handler
     application.add_error_handler(error_handler)
     
     logger.info("Starting Kingdom Conquest Bot...")
