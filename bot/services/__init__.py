@@ -1,3 +1,9 @@
+from .combat_engine import BattleEngine
+from .economy import EconomyService
+from .energy_service import EnergyService
+from .matchmaking import MatchmakingService
+from .notification import NotificationService
+from .ai_bot import AIBotService
 # Services package - Add new services
 try:
     from services.analytics import PlayerAnalytics, get_analytics
